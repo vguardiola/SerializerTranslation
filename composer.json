@@ -1,0 +1,30 @@
+{
+    "name": "avoo/serializer-translation",
+    "type": "symfony-bundle",
+    "description": "Translation component for JMS Serializer",
+    "keywords": ["Serializer translation"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "authors": [
+        {
+            "name": "Jérémy Jégou",
+            "email": "jejevovo@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Avoo\\SerializerTranslation\\" : ""
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.1-dev"
+        }
+    }
+}
