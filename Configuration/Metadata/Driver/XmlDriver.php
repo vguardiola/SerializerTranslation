@@ -58,6 +58,13 @@ class XmlDriver extends AbstractFileDriver
         $classMetadata = new ClassMetadata($name);
         $classMetadata->fileResources[] = $file;
         $classMetadata->fileResources[] = $class->getFileName();
+        $elements = $exists[0]->children();
+
+        foreach ($elements->property as $property) {
+            if (isset($property->attributes(self::NAMESPACE_URI)->translate)) {
+                //Add into virtual property
+            }
+        }
 
         return $classMetadata;
     }
