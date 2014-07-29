@@ -28,7 +28,6 @@ namespace Avoo\SerializerTranslation\Serializer;
 
 use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
 use JMS\Serializer\XmlSerializationVisitor;
-use JMS\Serializer\SerializationContext;
 
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>

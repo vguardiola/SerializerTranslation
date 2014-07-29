@@ -56,8 +56,12 @@ class YamlDriver extends AbstractFileDriver
 
         if (isset($config['properties'])) {
             foreach ($config['properties'] as $key => $property) {
-                if (isset($property['translate']) && true == $property['translate']) {
-                    $options = isset($property['translate_options']) ? $property['translate_options'] : array();
+                if (isset($property['translate'])) {
+                    $options = array();
+                    if (is_array($property['translate'])) {
+                        $options = $property['translate'];
+                    }
+
                     $propertyMetadata = new VirtualPropertyMetadata($class->getName(), $key, $options);
                     $classMetadata->addPropertyToTranslate($propertyMetadata);
                 }

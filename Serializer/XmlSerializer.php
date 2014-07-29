@@ -28,30 +28,38 @@ namespace Avoo\SerializerTranslation\Serializer;
 
 use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
 
-use JMS\Serializer\SerializationContext;
+use Avoo\SerializerTranslation\Configuration\Metadata\VirtualPropertyMetadata;
 use JMS\Serializer\XmlSerializationVisitor;
-use Metadata\MetadataFactoryInterface;
+use Symfony\Component\Translation\Translator;
 
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
  */
 class XmlSerializer implements XmlSerializerInterface
 {
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadataFactory;
+    private $translator;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setMetadataFactory(MetadataFactoryInterface $metadataFactory)
+    public function __construct(Translator $translator)
     {
-        $this->metadataFactory = $metadataFactory;
+        $this->translator = $translator;
     }
 
     public function trans(ClassMetadataInterface $metadataClass, XmlSerializationVisitor $visitor, SerializationContext $context, $data)
     {
+        /** @var VirtualPropertyMetadata $propertyMetadata */
+        foreach ($metadataClass->getPropertiesToTranslate() as $propertyMetadata) {
+            $value = $propertyMetadata->getValue($data);
 
+            if (!empty($value)) {
+                $locale = $propertyMetadata->locale;
+
+                if (is_null($locale)) {
+                    $locale = $context->getLocale();
+                }
+
+                $value = $this->translator->trans($value, $propertyMetadata->parameters, $propertyMetadata->domain, $locale);
+                $propertyMetadata->setValue($data, $value);
+            }
+        }
     }
 }
