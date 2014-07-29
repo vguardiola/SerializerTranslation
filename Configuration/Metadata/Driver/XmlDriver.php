@@ -27,6 +27,7 @@
 namespace Avoo\SerializerTranslation\Configuration\Metadata\Driver;
 
 use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadata;
+use Avoo\SerializerTranslation\Configuration\Metadata\VirtualPropertyMetadata;
 use JMS\Serializer\Exception\XmlErrorException;
 use Metadata\Driver\AbstractFileDriver;
 
@@ -61,8 +62,24 @@ class XmlDriver extends AbstractFileDriver
         $elements = $exists[0]->children();
 
         foreach ($elements->property as $property) {
-            if (isset($property->attributes(self::NAMESPACE_URI)->translate)) {
-                //Add into virtual property
+            if (isset($property->children(self::NAMESPACE_URI)->translate)) {
+                $translate = $property->children(self::NAMESPACE_URI)->translate;
+                $options = array();
+
+                if (isset($translate->attributes()->domain)) {
+                    $options['domain'] = (string) $translate->attributes()->domain;
+                }
+
+                if (isset($translate->attributes()->locale)) {
+                    $options['locale'] = (string) $translate->attributes()->locale;
+                }
+
+                foreach ($translate->parameter as $parameter) {
+                    $options['parameters'][(string) $parameter->attributes()->name] = (string) $parameter->attributes()->value;
+                }
+
+                $propertyMetadata = new VirtualPropertyMetadata($class->getName(), (string) $property->attributes()->name, $options);
+                $classMetadata->addPropertyToTranslate($propertyMetadata);
             }
         }
 
