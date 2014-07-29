@@ -35,7 +35,7 @@ use Metadata\MetadataFactoryInterface;
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
  */
-class XmlSerializer implements XmlSerializerInterface, JMSSerializerMetadataAwareInterface
+class XmlSerializer implements XmlSerializerInterface
 {
     /**
      * @var MetadataFactoryInterface
