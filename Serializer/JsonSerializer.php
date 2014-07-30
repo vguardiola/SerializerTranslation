@@ -28,6 +28,7 @@ namespace Avoo\SerializerTranslation\Serializer;
 
 use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
 use Avoo\SerializerTranslation\Configuration\Metadata\VirtualPropertyMetadata;
+use Avoo\SerializerTranslation\Expression\ExpressionEvaluator;
 use JMS\Serializer\JsonSerializationVisitor;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
@@ -36,11 +37,26 @@ use Symfony\Bundle\FrameworkBundle\Translation\Translator;
  */
 class JsonSerializer implements JsonSerializerInterface
 {
+    /**
+     * @var Translator
+     */
     private $translator;
 
-    public function __construct(Translator $translator)
+    /**
+     * @var ExpressionEvaluator
+     */
+    private $expressionEvaluator;
+
+    /**
+     * Construct
+     *
+     * @param Translator          $translator
+     * @param ExpressionEvaluator $expressionEvaluator
+     */
+    public function __construct(Translator $translator, ExpressionEvaluator $expressionEvaluator)
     {
         $this->translator = $translator;
+        $this->expressionEvaluator = $expressionEvaluator;
     }
 
     /**
@@ -59,8 +75,10 @@ class JsonSerializer implements JsonSerializerInterface
                     $locale = $context->getLocale();
                 }
 
-                $value = $this->translator->trans($value, $propertyMetadata->parameters, $propertyMetadata->domain, $locale);
-                $propertyMetadata->setValue($data, $value);
+                $parameters = $this->expressionEvaluator->evaluateArray($propertyMetadata->parameters, $data);
+
+                $value = $this->translator->trans($value, $parameters, $propertyMetadata->domain, $locale);
+                $propertyMetadata->setValue($data, $this->expressionEvaluator->evaluate($value, $data));
             }
         }
     }
