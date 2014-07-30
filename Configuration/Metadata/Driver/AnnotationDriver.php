@@ -26,15 +26,13 @@
 
 namespace Avoo\SerializerTranslation\Configuration\Metadata\Driver;
 
+use Avoo\SerializerTranslation\Configuration\Annotation\Translate;
+use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadata;
+use Avoo\SerializerTranslation\Configuration\Metadata\VirtualPropertyMetadata;
 use Doctrine\Common\Annotations\Reader as AnnotationsReader;
-use Hateoas\Configuration\Annotation;
-use Hateoas\Configuration\Embedded;
-use Hateoas\Configuration\Exclusion;
-use Hateoas\Configuration\Metadata\ClassMetadata;
-use Hateoas\Configuration\Relation;
-use Hateoas\Configuration\RelationProvider;
-use Hateoas\Configuration\Route;
 use Metadata\Driver\DriverInterface;
+use Metadata\MergeableClassMetadata;
+use Metadata\PropertyMetadata;
 
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
@@ -59,18 +57,49 @@ class AnnotationDriver implements DriverInterface
      */
     public function loadMetadataForClass(\ReflectionClass $class)
     {
-        $annotations = $this->reader->getClassAnnotations($class);
-
-        if (0 === count($annotations)) {
-            return null;
-        }
-
         $classMetadata = new ClassMetadata($class->getName());
-        $classMetadata->fileResources[] = $class->getFilename();
 
-        foreach ($annotations as $annotation) {
+        foreach ($class->getProperties() as $reflectionProperty) {
+            $annotation = $this->reader->getPropertyAnnotation(
+                $reflectionProperty,
+                'Avoo\\SerializerTranslation\\Configuration\\Annotation\\Translate'
+            );
+
+            if (null === $annotation) {
+                continue;
+            }
+
+            $options = $this->createOptions($annotation);
+            $propertyMetadata = new VirtualPropertyMetadata($class->getName(), $reflectionProperty->getName(), $options);
+            $classMetadata->addPropertyToTranslate($propertyMetadata);
         }
 
         return $classMetadata;
+    }
+
+    /**
+     * Create options
+     *
+     * @param Translate $annotation
+     *
+     * @return array
+     */
+    private function createOptions(Translate $annotation)
+    {
+        $options = array();
+
+        if (isset($annotation->domain)) {
+            $options['domain'] = $annotation->domain;
+        }
+
+        if (isset($annotation->locale)) {
+            $options['locale'] = $annotation->locale;
+        }
+
+        foreach ($annotation->parameters as $key => $value) {
+            $options['parameters'][$key] = $value;
+        }
+
+        return $options;
     }
 }
