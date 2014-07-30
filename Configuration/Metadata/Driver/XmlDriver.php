@@ -63,20 +63,8 @@ class XmlDriver extends AbstractFileDriver
 
         foreach ($elements->property as $property) {
             if (isset($property->children(self::NAMESPACE_URI)->translate)) {
-                $translate = $property->children(self::NAMESPACE_URI)->translate;
-                $options = array();
-
-                if (isset($translate->attributes()->domain)) {
-                    $options['domain'] = (string) $translate->attributes()->domain;
-                }
-
-                if (isset($translate->attributes()->locale)) {
-                    $options['locale'] = (string) $translate->attributes()->locale;
-                }
-
-                foreach ($translate->parameter as $parameter) {
-                    $options['parameters'][(string) $parameter->attributes()->name] = (string) $parameter->attributes()->value;
-                }
+                $translateNode = $property->children(self::NAMESPACE_URI)->translate;
+                $options = $this->createOptions($translateNode);
 
                 $propertyMetadata = new VirtualPropertyMetadata($class->getName(), (string) $property->attributes()->name, $options);
                 $classMetadata->addPropertyToTranslate($propertyMetadata);
@@ -92,5 +80,31 @@ class XmlDriver extends AbstractFileDriver
     protected function getExtension()
     {
         return 'xml';
+    }
+
+    /**
+     * Create options
+     *
+     * @param \SimpleXMLElement $node
+     *
+     * @return array
+     */
+    private function createOptions(\SimpleXMLElement $node)
+    {
+        $options = array();
+
+        if (isset($node->attributes()->domain)) {
+            $options['domain'] = (string) $node->attributes()->domain;
+        }
+
+        if (isset($node->attributes()->locale)) {
+            $options['locale'] = (string) $node->attributes()->locale;
+        }
+
+        foreach ($node->parameter as $parameter) {
+            $options['parameters'][(string) $parameter->attributes()->name] = (string) $parameter->attributes()->value;
+        }
+
+        return $options;
     }
 }
