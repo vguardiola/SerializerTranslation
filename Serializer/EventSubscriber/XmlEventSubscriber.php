@@ -26,19 +26,10 @@
 
 namespace Avoo\SerializerTranslation\Serializer\EventSubscriber;
 
-use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
-use Avoo\SerializerTranslation\Serializer\SerializationContext;
-use Avoo\SerializerTranslation\Serializer\XmlSerializerInterface;
-use JMS\Serializer\EventDispatcher\Events;
-use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
-use JMS\Serializer\EventDispatcher\ObjectEvent;
-use Metadata\MetadataFactoryInterface;
-use Symfony\Component\DependencyInjection\Container;
-
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
  */
-class XmlEventSubscriber implements EventSubscriberInterface
+class XmlEventSubscriber extends EventSubscriber
 {
     /**
      * {@inheritdoc}
@@ -46,59 +37,9 @@ class XmlEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            array(
-                'event'  => Events::PRE_SERIALIZE,
-                'format' => 'xml',
-                'method' => 'onPreSerialize',
-            ),
+            array_merge(array(
+                'format' => 'xml'
+            ), parent::getSubscribedEvents())
         );
-    }
-
-    /**
-     * @var XmlSerializerInterface
-     */
-    private $xmlSerializer;
-
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadataFactory;
-
-    /**
-     * @var Container
-     */
-    private $container;
-
-    /**
-     * @param XmlSerializerInterface   $xmlSerializer
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param Container                $container
-     */
-    public function __construct(
-        XmlSerializerInterface $xmlSerializer,
-        MetadataFactoryInterface $metadataFactory,
-        Container $container
-    ) {
-        $this->xmlSerializer = $xmlSerializer;
-        $this->metadataFactory = $metadataFactory;
-        $this->container = $container;
-    }
-
-    public function onPreSerialize(ObjectEvent $event)
-    {
-        $object  = $event->getObject();
-        $context   = $event->getContext();
-
-        if (!$context instanceof SerializationContext) {
-            $context = new SerializationContext($context);
-            $context->setLocale($this->container->getParameter('locale', $context->getLocale()));
-        }
-
-        /** @var ClassMetadataInterface $metadataClass */
-        $metadataClass = $this->metadataFactory->getMetadataForClass(get_class($object));
-
-        if (!is_null($metadataClass) && count($metadataClass->getPropertiesToTranslate())) {
-            $this->xmlSerializer->trans($metadataClass, $event->getVisitor(), $context, $object);
-        }
     }
 }

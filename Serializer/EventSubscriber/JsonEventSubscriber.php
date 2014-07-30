@@ -26,19 +26,10 @@
 
 namespace Avoo\SerializerTranslation\Serializer\EventSubscriber;
 
-use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
-use Avoo\SerializerTranslation\Serializer\SerializationContext;
-use Avoo\SerializerTranslation\Serializer\JsonSerializerInterface;
-use JMS\Serializer\EventDispatcher\Events;
-use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
-use JMS\Serializer\EventDispatcher\ObjectEvent;
-use Metadata\MetadataFactoryInterface;
-use Symfony\Component\DependencyInjection\Container;
-
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
  */
-class JsonEventSubscriber implements EventSubscriberInterface
+class JsonEventSubscriber extends EventSubscriber
 {
     /**
      * {@inheritdoc}
@@ -46,59 +37,9 @@ class JsonEventSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-            array(
-                'event'  => Events::PRE_SERIALIZE,
-                'format' => 'json',
-                'method' => 'onPreSerialize',
-            ),
+            array_merge(array(
+                'format' => 'json'
+            ), parent::getSubscribedEvents())
         );
-    }
-
-    /**
-     * @var JsonSerializerInterface
-     */
-    private $jsonSerializer;
-
-    /**
-     * @var MetadataFactoryInterface
-     */
-    private $metadataFactory;
-
-    /**
-     * @var Container
-     */
-    private $container;
-
-    /**
-     * @param JsonSerializerInterface  $jsonSerializer
-     * @param MetadataFactoryInterface $metadataFactory
-     * @param Container                $container
-     */
-    public function __construct(
-        JsonSerializerInterface $jsonSerializer,
-        MetadataFactoryInterface $metadataFactory,
-        Container $container
-    ) {
-        $this->jsonSerializer = $jsonSerializer;
-        $this->metadataFactory = $metadataFactory;
-        $this->container = $container;
-    }
-
-    public function onPreSerialize(ObjectEvent $event)
-    {
-        $object  = $event->getObject();
-        $context = $event->getContext();
-
-        if (!$context instanceof SerializationContext) {
-            $context = new SerializationContext($context);
-            $context->setLocale($this->container->getParameter('locale', $context->getLocale()));
-        }
-
-        /** @var ClassMetadataInterface $metadataClass */
-        $metadataClass = $this->metadataFactory->getMetadataForClass(get_class($object));
-
-        if (!is_null($metadataClass) && count($metadataClass->getPropertiesToTranslate())) {
-            $this->jsonSerializer->trans($metadataClass, $event->getVisitor(), $context, $object);
-        }
     }
 }
