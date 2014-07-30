@@ -54,17 +54,15 @@ class YamlDriver extends AbstractFileDriver
         $classMetadata->fileResources[] = $file;
         $classMetadata->fileResources[] = $class->getFileName();
 
-        if (isset($config['properties'])) {
-            foreach ($config['properties'] as $key => $property) {
-                if (isset($property['translate'])) {
-                    $options = array();
-                    if (is_array($property['translate'])) {
-                        $options = $property['translate'];
-                    }
+        if (!isset($config['properties'])) {
+            return $classMetadata;
+        }
 
-                    $propertyMetadata = new VirtualPropertyMetadata($class->getName(), $key, $options);
-                    $classMetadata->addPropertyToTranslate($propertyMetadata);
-                }
+        foreach ($config['properties'] as $key => $property) {
+            if (isset($property['translate'])) {
+                $options = $this->createOptions($property);
+                $propertyMetadata = new VirtualPropertyMetadata($class->getName(), $key, $options);
+                $classMetadata->addPropertyToTranslate($propertyMetadata);
             }
         }
 
@@ -77,5 +75,22 @@ class YamlDriver extends AbstractFileDriver
     protected function getExtension()
     {
         return 'yml';
+    }
+
+    /**
+     * Create options
+     *
+     * @param array $property
+     *
+     * @return array
+     */
+    private function createOptions($property)
+    {
+        $options = array();
+        if (is_array($property['translate'])) {
+            $options = $property['translate'];
+        }
+
+        return $options;
     }
 }
