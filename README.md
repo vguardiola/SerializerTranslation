@@ -8,11 +8,14 @@ SerializerTranslation
 This is a PHP library based on JMS Serializer, and add translation option configuration for any properties.
 
 * [Installation](#installation)
-* [Usage](#usage)
+* [Default Usage](#default-usage)
   - [XML](#xml)
   - [YAML](#yaml)
   - [Annotations](#annotations)
-
+* [With custom parameters](#with-custom-parameters)
+  - [XML](#xml)
+  - [YAML](#yaml)
+  - [Annotations](#annotations)
 
 Installation
 ------------
@@ -57,8 +60,8 @@ avoo_serializer_translation:
 ```
 
 
-Usage
------
+Default Usage
+-------------
 
 For example, you want translate `acme.foo.bar` from BDD.
 
@@ -74,12 +77,43 @@ For example, you want translate `acme.foo.bar` from BDD.
 </serializer>
 ```
 
-#### Custom parameters
+### YAML
+
+```yaml
+Acme\DemoBundle\Entity\Sample:
+    exclusion_policy: ALL
+    xml_root_name: sample
+    properties:
+        property:
+            expose: true
+            type: string
+            translate: true
+```
+
+### Annotations
+
+**Important:** The annotation need to be defined.
+
+```php
+use Avoo\SerializerTranslation\Configuration\Annotation as AvooSerializer;
+
+/**
+ * @var string $property
+ *
+ * @AvooSerializer\Translate()
+ */
+ protected $property;
+```
+
+With custom parameters
+-------------
+
+#### With custom parameters
 
 Into your translation file:
 
 ``` yaml
-# Acme/DemoBundle/Resources/translations/messages*.en*.yml
+# Acme/DemoBundle/Resources/translations/messages.en.yml
 
 acme:
     foo.bar: "welcome %foo%"
@@ -111,6 +145,8 @@ Acme\DemoBundle\Entity\Sample:
             expose: true
             type: string
             translate:
+                parameters:
+                    %foo%: expr(object.getProperty())
                 locale: en
                 domain: messages
 ```
@@ -134,7 +170,7 @@ use Avoo\SerializerTranslation\Configuration\Annotation as AvooSerializer;
  protected $property;
 ```
 
-#### Result json sample
+#### Json output sample
 
 ```json
 {
