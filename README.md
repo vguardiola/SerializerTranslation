@@ -9,9 +9,6 @@ This is a PHP library based on JMS Serializer, and add translation option config
 
 * [Installation](#installation)
 * [Default Usage](#default-usage)
-  - [XML](#xml)
-  - [YAML](#yaml)
-  - [Annotations](#annotations)
 * [With custom parameters](#with-custom-parameters)
   - [XML](#xml)
   - [YAML](#yaml)
@@ -50,7 +47,7 @@ Default Configuration
 -----------------------
 
 ``` yaml
-# app/config/config*.yml
+# app/config/config.yml
 
 avoo_serializer_translation:
     metadata:
@@ -63,9 +60,19 @@ avoo_serializer_translation:
 Default Usage
 -------------
 
-For example, you want translate `acme.foo.bar` from BDD.
+For example, you want to translate `acme.foo.bar` from BDD.
 
 #### Default activation
+
+Into your translation file:
+
+``` yaml
+# Acme/DemoBundle/Resources/translations/messages.en.yml
+
+acme:
+    foo.bar: "Welcome."
+```
+
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <serializer>
@@ -104,6 +111,15 @@ use Avoo\SerializerTranslation\Configuration\Annotation as AvooSerializer;
  */
  protected $property;
 ```
+
+#### Json output sample
+
+```json
+{
+    "property": "welcome."
+}
+```
+
 
 With custom parameters
 -------------
