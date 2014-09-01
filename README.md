@@ -4,6 +4,10 @@ SerializerTranslation
 (https://scrutinizer-ci.com/g/avoo/SerializerTranslation/badges/build.png?b=master)](https://scrutinizer-ci.com/g/avoo/SerializerTranslation/build-status/master)
 [![Scrutinizer Code Quality]
 (https://scrutinizer-ci.com/g/avoo/SerializerTranslation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/avoo/SerializerTranslation/?branch=master)
+[![Latest Stable Version]
+(https://poser.pugx.org/avoo/serializer-translation/v/stable.svg)](https://packagist.org/packages/avoo/serializer-translation)
+[![License]
+(https://poser.pugx.org/avoo/serializer-translation/license.svg)](https://packagist.org/packages/avoo/serializer-translation)
 
 This is a PHP library based on JMS Serializer, and add translation option configuration for any properties.
 
