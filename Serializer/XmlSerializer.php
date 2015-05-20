@@ -30,7 +30,7 @@ use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
 
 use Avoo\SerializerTranslation\Configuration\Metadata\VirtualPropertyMetadata;
 use JMS\Serializer\XmlSerializationVisitor;
-use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
@@ -39,7 +39,7 @@ class XmlSerializer implements XmlSerializerInterface
 {
     private $translator;
 
-    public function __construct(Translator $translator)
+    public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
     }

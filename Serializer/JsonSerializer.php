@@ -30,7 +30,7 @@ use Avoo\SerializerTranslation\Configuration\Metadata\ClassMetadataInterface;
 use Avoo\SerializerTranslation\Configuration\Metadata\VirtualPropertyMetadata;
 use Avoo\SerializerTranslation\Expression\ExpressionEvaluator;
 use JMS\Serializer\JsonSerializationVisitor;
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
@@ -53,7 +53,7 @@ class JsonSerializer implements JsonSerializerInterface
      * @param Translator          $translator
      * @param ExpressionEvaluator $expressionEvaluator
      */
-    public function __construct(Translator $translator, ExpressionEvaluator $expressionEvaluator)
+    public function __construct(TranslatorInterface $translator, ExpressionEvaluator $expressionEvaluator)
     {
         $this->translator = $translator;
         $this->expressionEvaluator = $expressionEvaluator;
