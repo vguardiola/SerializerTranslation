@@ -93,8 +93,8 @@ class EventSubscriber implements EventSubscriberInterface
         }
 
         $request = $this->container->get('request');
-        $locale = $request ? $request->getPreferredLanguage() : $context->getLocale();
-        $context->setLocale($this->container->getParameter('locale', $locale));
+        $locale = $request ? $request->getPreferredLanguage() : $this->container->getParameter('locale', $context->getLocale());
+        $context->setLocale($locale);
 
         /** @var ClassMetadataInterface $metadataClass */
         $metadataClass = $this->metadataFactory->getMetadataForClass(get_class($object));
