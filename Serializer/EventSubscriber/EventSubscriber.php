@@ -35,6 +35,7 @@ use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
 use JMS\Serializer\EventDispatcher\ObjectEvent;
 use Metadata\MetadataFactoryInterface;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Jérémy Jégou <jejeavo@gmail.com>
@@ -89,8 +90,11 @@ class EventSubscriber implements EventSubscriberInterface
 
         if (!$context instanceof SerializationContext) {
             $context = new SerializationContext($context);
-            $context->setLocale($this->container->getParameter('locale', $context->getLocale()));
         }
+
+        $request = $this->container->get('request');
+        $locale = $request ? $request->getPreferredLanguage() : $context->getLocale();
+        $context->setLocale($this->container->getParameter('locale', $locale));
 
         /** @var ClassMetadataInterface $metadataClass */
         $metadataClass = $this->metadataFactory->getMetadataForClass(get_class($object));

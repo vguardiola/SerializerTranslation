@@ -51,11 +51,7 @@ class XmlSerializer implements XmlSerializerInterface
             $value = $propertyMetadata->getValue($data);
 
             if (!empty($value)) {
-                $locale = $propertyMetadata->locale;
-
-                if (is_null($locale)) {
-                    $locale = $context->getLocale();
-                }
+                $locale = $context->getLocale();
 
                 $value = $this->translator->trans($value, $propertyMetadata->parameters, $propertyMetadata->domain, $locale);
                 $propertyMetadata->setValue($data, $value);
