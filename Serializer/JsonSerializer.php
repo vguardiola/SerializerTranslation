@@ -69,11 +69,7 @@ class JsonSerializer implements JsonSerializerInterface
             $value = $propertyMetadata->getValue($data);
 
             if (!empty($value)) {
-                $locale = $propertyMetadata->locale;
-
-                if (is_null($locale)) {
-                    $locale = $context->getLocale();
-                }
+                $locale = $context->getLocale();
 
                 $parameters = $this->expressionEvaluator->evaluateArray($propertyMetadata->parameters, $data);
 

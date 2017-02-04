@@ -81,6 +81,14 @@ class ClassMetadata extends MergeableClassMetadata implements ClassMetadataInter
             throw new \InvalidArgumentException(sprintf('Object must be an instance of %s.', __CLASS__));
         }
 
+        if ($object instanceof ClassMetadata)
+        {
+            foreach ($object->getPropertiesToTranslate() as $prop) {
+                $this->addPropertyToTranslate($prop);
+            }
+
+        }
+
         parent::merge($object);
     }
 
